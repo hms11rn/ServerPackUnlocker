@@ -1,4 +1,4 @@
-package com.themysterys.spu.mixin;
+package com.github.hms11rn.spu.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
