@@ -1,23 +1,29 @@
 {
   "schemaVersion": 1,
   "id": "spu",
-  "version": "${version}",
+  "version": "${1.4}",
   "name": "Server Pack Unlocker",
   "description": "Allows resource packs provided by servers to be overridden and moved.",
   "authors": [
-    "TheMysterys"
+    "TheMysterys",
+    "hms11rn"
   ],
   "contact": {
-    "homepage": "https://modrinth.com/mod/server-pack-unlocker"
   },
   "license": "Public Domain",
   "icon": "assets/spu/icon.png",
   "environment": "client",
-  "entrypoints": {},
+  "entrypoints": {
+ 	"main": [
+      "com.github.hms11rn.spu.ServerPackUnlocker"
+    ]
+   },
   "mixins": [
     "spu.mixins.json"
   ],
   "depends": {
+     
+    "fabric-networking-api-v1": "*",
     "minecraft": ">=1.19.3"
   }
 }
