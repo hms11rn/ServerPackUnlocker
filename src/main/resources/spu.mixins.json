@@ -2,14 +2,16 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.github.hms11rn.spu.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "client": [
-    "ServerResourcePackProviderMixin"
+    "ServerResourcePackProviderMixin",
+    "ResourcePackManagerMixin",
+    "PackScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "mixins": [
-    "ResourcePackSendS2CPacketMixin",
+    "ResourcePackSendS2CPacketMixin"
   ]
 }
