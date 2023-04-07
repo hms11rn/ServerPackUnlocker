@@ -14,13 +14,10 @@ import org.slf4j.LoggerFactory;
 public class ServerPackUnlocker implements ModInitializer {
 
 
-	/**
-	 * Mod instance
-	 */
 	public static ServerPackUnlocker modInstance;
 
 	/**
-	 * Instance of PlayerConnectionEventHandler
+	 * Instance of PlayerConnectionEventHandler, used to get current server
 	 */
 	public PlayerConnectionEventHandler playerJoinServerHandler;
 
@@ -34,14 +31,13 @@ public class ServerPackUnlocker implements ModInitializer {
 	 */
 	public int justClosedPackScreen = 0;
 
+
 	/**
-	 * Settings for mod
+	 * Mod settings
 	 */
 	public Settings settings;
 
-	/**
-	 * Logger for mod
-	 */
+
 	public static Logger LOGGER = LoggerFactory.getLogger("spu");
 
 	/**
@@ -53,6 +49,7 @@ public class ServerPackUnlocker implements ModInitializer {
 		modInstance = this;
 		playerJoinServerHandler = new PlayerConnectionEventHandler(settings);
 		ClientPlayConnectionEvents.JOIN.register(playerJoinServerHandler);
+		ClientPlayConnectionEvents.DISCONNECT.register(playerJoinServerHandler);
 
 	}
 

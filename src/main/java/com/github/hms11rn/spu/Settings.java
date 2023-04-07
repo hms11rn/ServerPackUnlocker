@@ -36,7 +36,6 @@ public class Settings {
      * @return if serversWithPack contains this server
      */
     public boolean containsServer(String server) {
-
         return serversWithPack.containsKey(server);
     }
 

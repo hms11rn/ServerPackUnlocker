@@ -26,6 +26,7 @@ public class PackScreenMixin {
      */
     @Inject(method = "close", at = @At("HEAD"))
     private void closedPackScreen(CallbackInfo in) {
-        ServerPackUnlocker.modInstance.justClosedPackScreen = 1;
+        if (ServerPackUnlocker.modInstance.getCurrentServer() != null)
+             ServerPackUnlocker.modInstance.justClosedPackScreen = 1;
     }
 }

@@ -14,7 +14,7 @@ import static com.github.hms11rn.spu.ServerPackUnlocker.LOGGER;
  *
  * @author hms11rn
  */
-public class PlayerConnectionEventHandler implements ClientPlayConnectionEvents.Join {
+public class PlayerConnectionEventHandler implements ClientPlayConnectionEvents.Join, ClientPlayConnectionEvents.Disconnect {
 
 
     /**
@@ -64,4 +64,10 @@ public class PlayerConnectionEventHandler implements ClientPlayConnectionEvents.
     }
 
 
+    @Override
+    public void onPlayDisconnect(ClientPlayNetworkHandler handler, MinecraftClient client) {
+        currentServer = null;
+        ServerPackUnlocker.modInstance.currentServerResourcePack = null;
+        LOGGER.info("Player disconnected from server, setting currentServer and currentServerResourcePack to null");
+    }
 }

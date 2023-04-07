@@ -35,21 +35,20 @@ public class ResourcePackManagerMixin {
     @Inject(method = "buildEnabledProfiles", at = @At("RETURN"), cancellable = true)
     public void buildEnabledProfilesInjections(Collection<String> enabledNames, CallbackInfoReturnable<List<ResourcePackProfile>> ci) {
         ServerPackUnlocker spu = ServerPackUnlocker.modInstance;
-        ResourcePackProfile serverPackProfile = ServerPackUnlocker.modInstance.currentServerResourcePack;
+        ResourcePackProfile serverPackProfile = spu.currentServerResourcePack;
         if (serverPackProfile != null) {
             List<ResourcePackProfile> enabledPacks = new ArrayList<>(ci.getReturnValue());
             // buildEnableProfiles is called 3 times, so making sure that justClosedPackScreen is reset only after the 3 calls
             if (spu.justClosedPackScreen > 0) {
-
+                LOGGER.info("Resource Pack Screen was just closed, setting server resource pack value");
                 ServerPackUnlocker.modInstance.justClosedPackScreen++;
-                if (ServerPackUnlocker.modInstance.justClosedPackScreen == 3) {
+                if (ServerPackUnlocker.modInstance.justClosedPackScreen == 2) {
                     ServerPackUnlocker.modInstance.justClosedPackScreen = 0;
                     LOGGER.info("Enabled resource packs: " + enabledNames);
                 }
                 boolean doesContain = enabledNames.contains(serverPackProfile.getName());
                 spu.settings.setEnabled(spu.getCurrentServer(), doesContain);
                 int packIndex =  new ArrayList<>(enabledNames).indexOf(serverPackProfile.getName());
-                LOGGER.info("Pack Index: " + packIndex + " enableNames size: " + enabledNames.size());
                 if (packIndex == (enabledNames.size() - 1))
                     packIndex = -1;
                 spu.settings.setIndex(spu.getCurrentServer(), packIndex);
@@ -63,11 +62,6 @@ public class ResourcePackManagerMixin {
                         if (packIndex == -1)
                             packIndex = enabledNames.size();
                     enabledPacks.add(packIndex, MinecraftClient.getInstance().getResourcePackManager().getProfile(serverPackProfile.getName()));
-                    ArrayList<String> test = new ArrayList<>();
-                    for (ResourcePackProfile p : enabledPacks) {
-                        test.add(p.getName());
-                    }
-                    LOGGER.info(test.toString());
                 }
 
             }
