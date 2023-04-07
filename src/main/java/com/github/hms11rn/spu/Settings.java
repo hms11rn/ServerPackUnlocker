@@ -14,7 +14,6 @@ import static com.github.hms11rn.spu.ServerPackUnlocker.LOGGER;
 
 /**
  * Settings class to load and write to file Server Resource Pack Locations
- *
  * @author hms11rn
  */
 public class Settings {
@@ -215,6 +214,8 @@ public class Settings {
 
     static Map<String, Map.Entry<Boolean, Integer>> fromArray(ServerPackSetting[] serverPackSettings) {
         Map<String, Map.Entry<Boolean, Integer>> packsReturn = new HashMap<>();
+        if (serverPackSettings == null)
+            return new HashMap<>();
         for (ServerPackSetting serverPackSetting : serverPackSettings) {
             packsReturn.put(serverPackSetting.getName(), packOptionsEntry(serverPackSetting.isEnabled(), serverPackSetting.getIndex()));
         }
