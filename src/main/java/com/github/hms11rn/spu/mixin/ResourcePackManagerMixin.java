@@ -33,26 +33,43 @@ public class ResourcePackManagerMixin {
      * @param ci  used to cancel and change return value
      */
     @Inject(method = "buildEnabledProfiles", at = @At("RETURN"), cancellable = true)
-    public void buildEnabledProfilesInjections( Collection<String> enabledNames, CallbackInfoReturnable<List<ResourcePackProfile>> ci) {
+    public void buildEnabledProfilesInjections(Collection<String> enabledNames, CallbackInfoReturnable<List<ResourcePackProfile>> ci) {
+        ServerPackUnlocker spu = ServerPackUnlocker.modInstance;
         ResourcePackProfile serverPackProfile = ServerPackUnlocker.modInstance.currentServerResourcePack;
         if (serverPackProfile != null) {
             List<ResourcePackProfile> enabledPacks = new ArrayList<>(ci.getReturnValue());
             // buildEnableProfiles is called 3 times, so making sure that justClosedPackScreen is reset only after the 3 calls
-            if (ServerPackUnlocker.modInstance.justClosedPackScreen > 0) {
+            if (spu.justClosedPackScreen > 0) {
+
                 ServerPackUnlocker.modInstance.justClosedPackScreen++;
                 if (ServerPackUnlocker.modInstance.justClosedPackScreen == 3) {
                     ServerPackUnlocker.modInstance.justClosedPackScreen = 0;
                     LOGGER.info("Enabled resource packs: " + enabledNames);
                 }
                 boolean doesContain = enabledNames.contains(serverPackProfile.getName());
-                ServerPackUnlocker.modInstance.settings.setEnabled(ServerPackUnlocker.modInstance.getCurrentServer(), doesContain);
-                ServerPackUnlocker.modInstance.settings.writeSettings();
+                spu.settings.setEnabled(spu.getCurrentServer(), doesContain);
+                int packIndex =  new ArrayList<>(enabledNames).indexOf(serverPackProfile.getName());
+                LOGGER.info("Pack Index: " + packIndex + " enableNames size: " + enabledNames.size());
+                if (packIndex == (enabledNames.size() - 1))
+                    packIndex = -1;
+                spu.settings.setIndex(spu.getCurrentServer(), packIndex);
+                spu.settings.writeSettings();
 
                 return;
             }
-            if (ServerPackUnlocker.modInstance.shouldEnableServerPack()) {
-                if (!enabledNames.contains(serverPackProfile.getName()))
-                    enabledPacks.add(MinecraftClient.getInstance().getResourcePackManager().getProfile(serverPackProfile.getName()));
+            if (spu.shouldEnableServerPack()) {
+                if (!enabledNames.contains(serverPackProfile.getName())) {
+                    int packIndex = spu.settings.getIndex(spu.getCurrentServer());
+                        if (packIndex == -1)
+                            packIndex = enabledNames.size();
+                    enabledPacks.add(packIndex, MinecraftClient.getInstance().getResourcePackManager().getProfile(serverPackProfile.getName()));
+                    ArrayList<String> test = new ArrayList<>();
+                    for (ResourcePackProfile p : enabledPacks) {
+                        test.add(p.getName());
+                    }
+                    LOGGER.info(test.toString());
+                }
+
             }
             ci.setReturnValue(enabledPacks);
         }

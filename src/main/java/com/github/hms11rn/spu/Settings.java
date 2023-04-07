@@ -41,6 +41,17 @@ public class Settings {
         return serversWithPack.containsKey(server);
     }
 
+    public void setIndex(String server, int index) {
+        if ( serversWithPack.get(server) == null) {
+            serversWithPack.put(server, packOptionsEntry(true, Settings.TOP));
+            return;
+        }
+        serversWithPack.put(server, packOptionsEntry(isEnabled(server), index));
+    }
+
+    public int getIndex(String server) {
+        return serversWithPack.get(server).getValue();
+    }
     /**
      * Sets if a server pack is enabled or not
      * @param server server to change
