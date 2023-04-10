@@ -1,7 +1,7 @@
 package com.github.hms11rn.spu.mixin;
 
 import com.github.hms11rn.spu.ServerPackUnlocker;
-import net.minecraft.client.resource.ServerResourcePackProvider;
+import net.minecraft.client.resource.ClientBuiltinResourcePackProvider;
 import net.minecraft.resource.ResourcePackProfile;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,9 +20,8 @@ import static com.github.hms11rn.spu.ServerPackUnlocker.LOGGER;
  *
  * @author hms11rn
  */
-@Mixin(ServerResourcePackProvider.class)
+@Mixin(ClientBuiltinResourcePackProvider.class)
 public class ServerResourcePackProviderMixin {
-
 	/**
 	 * Shadows serverContainer from ServerResourcePackProvider
 	 */
@@ -33,9 +32,11 @@ public class ServerResourcePackProviderMixin {
 	 * Removes the pin from the Resource Pack, that way it's not pinned to the top and can be moved.
 	 * @return false
 	 */
+
 	@ModifyArg(method = "loadServerPack(Ljava/io/File;Lnet/minecraft/resource/ResourcePackSource;)Ljava/util/concurrent/CompletableFuture;",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/resource/ResourcePackProfile;of(Ljava/lang/String;Lnet/minecraft/text/Text;ZLnet/minecraft/resource/ResourcePackProfile$PackFactory;Lnet/minecraft/resource/ResourcePackProfile$Metadata;Lnet/minecraft/resource/ResourceType;Lnet/minecraft/resource/ResourcePackProfile$InsertionPosition;ZLnet/minecraft/resource/ResourcePackSource;)Lnet/minecraft/resource/ResourcePackProfile;"), index = 7)
-	private boolean loadServerPack(boolean isPinned) {
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/resource/ResourcePackProfile;<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/text/Text;Lnet/minecraft/text/Text;Lnet/minecraft/resource/ResourcePackCompatibility;Lnet/minecraft/resource/ResourcePackProfile$InsertionPosition;ZLnet/minecraft/resource/ResourcePackSource;)V"),
+			index = 7)
+	private boolean isPinned(boolean isPinned) {
 		ServerPackUnlocker.LOGGER.info("ServerResourcePack::loadServerPack(ResourcePackSource) was called, that means this server has a Resource Pack.");
 		return false;
 	}
@@ -45,13 +46,15 @@ public class ServerResourcePackProviderMixin {
 	 * @return false
 	 */
 	@ModifyArg(method = "loadServerPack(Ljava/io/File;Lnet/minecraft/resource/ResourcePackSource;)Ljava/util/concurrent/CompletableFuture;",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/resource/ResourcePackProfile;of(Ljava/lang/String;Lnet/minecraft/text/Text;ZLnet/minecraft/resource/ResourcePackProfile$PackFactory;Lnet/minecraft/resource/ResourcePackProfile$Metadata;Lnet/minecraft/resource/ResourceType;Lnet/minecraft/resource/ResourcePackProfile$InsertionPosition;ZLnet/minecraft/resource/ResourcePackSource;)Lnet/minecraft/resource/ResourcePackProfile;"), index = 2)
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/resource/ResourcePackProfile;<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/text/Text;Lnet/minecraft/text/Text;Lnet/minecraft/resource/ResourcePackCompatibility;Lnet/minecraft/resource/ResourcePackProfile$InsertionPosition;ZLnet/minecraft/resource/ResourcePackSource;)V"),
+			index = 1)
 	private boolean forcedEnabled(boolean enabled) {
 		return false;
 	}
 
+
 	/**
-	 * Hooks into {@link net.minecraft.client.resource.ServerResourcePackProvider#loadServerPack(java.io.File, net.minecraft.resource.ResourcePackSource)}
+	 * Hooks into loadServerPack()
 	 * right before the method returns, after serverContainer was set, and copies it.
 	 */
 	@Inject(method = "loadServerPack(Ljava/io/File;Lnet/minecraft/resource/ResourcePackSource;)Ljava/util/concurrent/CompletableFuture;" ,

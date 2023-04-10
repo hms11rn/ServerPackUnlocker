@@ -27,7 +27,7 @@ public class ResourcePackManagerMixin {
 
 
     /**
-     * Hooks into {@link net.minecraft.resource.ResourcePackManager#buildEnabledProfiles(java.util.Collection)}
+     * Hooks into buildEnableProfiles
      * and adds Server Pack into enabled packs
      * @param enabledNames string of currently enabled names
      * @param ci  used to cancel and change return value
@@ -38,11 +38,9 @@ public class ResourcePackManagerMixin {
         ResourcePackProfile serverPackProfile = spu.currentServerResourcePack;
         if (serverPackProfile != null) {
             List<ResourcePackProfile> enabledPacks = new ArrayList<>(ci.getReturnValue());
-            // buildEnableProfiles is called 3 times, so making sure that justClosedPackScreen is reset only after the 3 calls
+            // using int for justClosedPackScreen for testing, for final release I'll see if I can use boolean
             if (spu.justClosedPackScreen > 0) {
-                LOGGER.info("Resource Pack Screen was just closed, setting server resource pack value");
-                ServerPackUnlocker.modInstance.justClosedPackScreen++;
-                if (ServerPackUnlocker.modInstance.justClosedPackScreen == 2) {
+                if (ServerPackUnlocker.modInstance.justClosedPackScreen == 1) {
                     ServerPackUnlocker.modInstance.justClosedPackScreen = 0;
                     LOGGER.info("Enabled resource packs: " + enabledNames);
                 }
