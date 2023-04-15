@@ -58,8 +58,7 @@ public class ServerPackUnlocker implements ModInitializer {
 	 * @return if server resource pack should be enabled
 	 */
 	public boolean shouldEnableServerPack() {
-		return  settings.isEnabled(playerJoinServerHandler.currentServer);
-
+		return settings.isEnabled(playerJoinServerHandler.currentServer);
 	}
 
 	/**

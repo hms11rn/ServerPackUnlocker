@@ -30,7 +30,7 @@ public class ServerResourcePackProviderMixin {
 	private ResourcePackProfile serverContainer;
 
 	/**
-	 * Removes the pin from the Resource Pack, that way it's not pinned to the top and can be moved.
+	 * Removes the pin from the Resource Pack, that way it's not pinned to the top and can be moved up and down
 	 * @return false
 	 */
 	@ModifyArg(method = "loadServerPack(Ljava/io/File;Lnet/minecraft/resource/ResourcePackSource;)Ljava/util/concurrent/CompletableFuture;",
@@ -41,7 +41,7 @@ public class ServerResourcePackProviderMixin {
 	}
 
 	/**
-	 * Disables forcing the resource pack to be enabled.
+	 * Disables forcing the resource pack to be enabled
 	 * @return false
 	 */
 	@ModifyArg(method = "loadServerPack(Ljava/io/File;Lnet/minecraft/resource/ResourcePackSource;)Ljava/util/concurrent/CompletableFuture;",
@@ -52,7 +52,7 @@ public class ServerResourcePackProviderMixin {
 
 	/**
 	 * Hooks into {@link net.minecraft.client.resource.ServerResourcePackProvider#loadServerPack(java.io.File, net.minecraft.resource.ResourcePackSource)}
-	 * right before the method returns, after serverContainer was set, and copies it.
+	 * right before the method returns, after serverContainer was set, and copies it
 	 */
 	@Inject(method = "loadServerPack(Ljava/io/File;Lnet/minecraft/resource/ResourcePackSource;)Ljava/util/concurrent/CompletableFuture;" ,
 	at = @At("TAIL"))

@@ -8,7 +8,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.github.hms11rn.spu.ServerPackUnlocker.LOGGER;
 
@@ -20,7 +23,12 @@ public class Settings {
 
     private Map<String, Map.Entry<Boolean, Integer>> serversWithPack;
 
+    /**
+     * Top location of resource pack
+     */
     public static int TOP = -1;
+
+    public static boolean DEFAULT_ENABLED = true;
 
     File configFile;
 
@@ -39,14 +47,24 @@ public class Settings {
         return serversWithPack.containsKey(server);
     }
 
+    /**
+     * Changes index of server, the index is from the bottom of the Resource Pack list
+     * <br>
+     * An index of -1 is the top of the list
+     * @param server Server to change the Resource Pack index
+     * @param index index of server from the bottom
+     */
     public void setIndex(String server, int index) {
-        if ( serversWithPack.get(server) == null) {
+        if ( serversWithPack.get(server) == null) { // Null safe
             serversWithPack.put(server, packOptionsEntry(true, Settings.TOP));
             return;
         }
         serversWithPack.put(server, packOptionsEntry(isEnabled(server), index));
     }
 
+    /**
+     * @return index of resource pack of that server
+     */
     public int getIndex(String server) {
         return serversWithPack.get(server).getValue();
     }
@@ -64,7 +82,7 @@ public class Settings {
     }
 
     /**
-     * Adds server to serversWithPack list
+     * Adds server to serversWithPack
      * @param server server to add
      * @param enabled default enabled
      * @param index default index
@@ -77,7 +95,7 @@ public class Settings {
     }
 
     /**
-     *  Checks if server resource pack is enabled in config
+     *  Checks if server resource pack is enabled in serversWithPack
      * @param server server to check
      * @return if the resource pack for the server is enabled
      */
@@ -121,7 +139,7 @@ public class Settings {
     }
 
     /**
-     * Writes settings into file
+     * Writes settings into file using {@link Gson}
      */
     public void writeSettings() {
         createFile();
@@ -159,11 +177,15 @@ public class Settings {
             @Override
             public Integer setValue(Integer value) {
 
-                return null;
+                return null; // not used so sets it to null
             }
         };
     }
 
+    /**
+     * Settings for a Server Resource Pack,
+     * the reason why it's a separate class, is because {@link Gson} can't deserialize Lists, but can deserialize classes
+     */
     private static class ServerPackSetting {
         String name;
         boolean enabled;
@@ -179,27 +201,22 @@ public class Settings {
             return name;
         }
 
-        public void setName(String name) {
-            this.name = name;
-        }
 
         public boolean isEnabled() {
             return enabled;
         }
 
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
 
         public int getIndex() {
             return index;
         }
 
-        public void setIndex(int index) {
-            this.index = index;
-        }
+
     }
 
+    /**
+     * Converts a Map of Server Resource Packs into an array of ServerPackSetting so {@link Gson} can deserialize it and write it to a file
+     */
     static ServerPackSetting[] fromMap(Map<String, Map.Entry<Boolean, Integer>> map) {
         List<ServerPackSetting> list = new ArrayList<>();
         for (Map.Entry<String, Map.Entry<Boolean, Integer>> e : map.entrySet()) {
@@ -211,6 +228,9 @@ public class Settings {
         return list.toArray(new ServerPackSetting[list.size()]);
     }
 
+    /**
+     * converts an array of ServerPackSetting back into a map of Server Resource Packs
+     */
     static Map<String, Map.Entry<Boolean, Integer>> fromArray(ServerPackSetting[] serverPackSettings) {
         Map<String, Map.Entry<Boolean, Integer>> packsReturn = new HashMap<>();
         if (serverPackSettings == null)

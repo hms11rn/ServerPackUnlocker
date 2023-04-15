@@ -2,6 +2,7 @@ package com.github.hms11rn.spu.mixin;
 
 
 import com.github.hms11rn.spu.ServerPackUnlocker;
+import com.github.hms11rn.spu.Settings;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.ResourcePackProfile;
@@ -19,12 +20,10 @@ import static com.github.hms11rn.spu.ServerPackUnlocker.LOGGER;
 /**
  * Adds server resource pack to enabled resource packs by hooking into buildEnableProfiles
  *
- * @author TheMysterys
  * @author hms11
  */
 @Mixin(ResourcePackManager.class)
 public class ResourcePackManagerMixin {
-
 
     /**
      * Hooks into {@link net.minecraft.resource.ResourcePackManager#buildEnabledProfiles(java.util.Collection)}
@@ -46,19 +45,20 @@ public class ResourcePackManagerMixin {
                 }
                 boolean doesContain = enabledNames.contains(serverPackProfile.getName());
                 spu.settings.setEnabled(spu.getCurrentServer(), doesContain);
-                int packIndex =  new ArrayList<>(enabledNames).indexOf(serverPackProfile.getName());
+                int packIndex = new ArrayList<>(enabledNames).indexOf(serverPackProfile.getName());
                 if (packIndex == (enabledNames.size() - 1))
-                    packIndex = -1;
+                    packIndex = Settings.TOP;
                 spu.settings.setIndex(spu.getCurrentServer(), packIndex);
                 spu.settings.writeSettings();
-
                 return;
             }
             if (spu.shouldEnableServerPack()) {
+                int packIndex = spu.settings.getIndex(spu.getCurrentServer());
+                if (packIndex == Settings.TOP)
+                    packIndex = enabledNames.size();
+                if (!MinecraftClient.getInstance().options.resourcePacks.contains(serverPackProfile.getName()))
+                    MinecraftClient.getInstance().options.resourcePacks.add(packIndex, serverPackProfile.getName());
                 if (!enabledNames.contains(serverPackProfile.getName())) {
-                    int packIndex = spu.settings.getIndex(spu.getCurrentServer());
-                        if (packIndex == -1)
-                            packIndex = enabledNames.size();
                     enabledPacks.add(packIndex, MinecraftClient.getInstance().getResourcePackManager().getProfile(serverPackProfile.getName()));
                 }
 
