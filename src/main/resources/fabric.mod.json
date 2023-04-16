@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "spu",
-  "version": "1.4.1",
+  "version": "1.5",
   "name": "Server Pack Unlocker",
   "description": "Allows resource packs provided by servers to be overridden and moved.",
   "authors": [
@@ -13,7 +13,7 @@
     "issues": "https://github.com/hms11rn/ServerPackUnlocker/issues",
     "sources": "https://github.com/hms11rn/ServerPackUnlocker"
   },
-  "license": "Public Domain",
+  "license": "MIT",
   "icon": "assets/spu/icon.png",
   "environment": "client",
   "entrypoints": {
