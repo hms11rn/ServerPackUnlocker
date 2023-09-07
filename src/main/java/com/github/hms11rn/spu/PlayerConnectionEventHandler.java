@@ -65,6 +65,7 @@ public class PlayerConnectionEventHandler implements ClientPlayConnectionEvents.
      */
     @Override
     public void onPlayDisconnect(ClientPlayNetworkHandler handler, MinecraftClient client) {
+        if (ServerPackUnlocker.modInstance.currentServerResourcePack == null) return;
         if (client.options.resourcePacks.contains(ServerPackUnlocker.modInstance.currentServerResourcePack.getName()))
             client.options.resourcePacks.remove(ServerPackUnlocker.modInstance.currentServerResourcePack.getName());
         currentServer = null;
